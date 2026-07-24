@@ -20,6 +20,8 @@ Bước 5: Sau đó mở thư mục Client/bin/debug/net8.0-windows/ và click m
 (Có thể build file setup chính thức)
 
 -Server:
+
+
 Bước 1: Tải và cài đặt PostgreSQL và NODEJS
 
 Bước 2: Giải nén folder SERVER và chỉnh sửa file .env thành những thông tin của database
