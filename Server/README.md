@@ -181,5 +181,7 @@ sudo ufw status
    - `CTNS-2026-VIP-KEY-001`
    - `CTNS-2026-VIP-KEY-002`
    - `CTNS-2026-VIP-KEY-003`
+   - `CTNS-2026-VIP-KEY-004`
+   - `CTNS-2026-VIP-KEY-005`
 4. Khai báo Tên đăng nhập và Mật khẩu tùy ý, hệ thống sẽ mã hóa và lưu vào PostgreSQL.
 5. Quay lại tab **ĐĂNG NHẬP** và bắt đầu quản lý phòng thi!
