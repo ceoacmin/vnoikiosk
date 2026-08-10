@@ -61,7 +61,7 @@ GRANT ALL PRIVILEGES ON DATABASE vnoi_kiosk TO postgres;
 -- Thoát
 \q
 ```
-*Lưu ý: Bạn có thể đổi mật khẩu `postgres` thành mật khẩu khác an toàn hơn, nhưng nhớ phải cập nhật lại tương ứng trong file `.env`.*
+*Lưu ý: Bạn có thể đổi mật khẩu `postgres` thành mật khẩu khác an toàn hơn (nhưng chỉ có chữ cái thường, hoa và số), và nhớ phải cập nhật lại tương ứng trong file `.env` (và không thêm dấu "").*
 
 ---
 
