@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ VNOI KIOSK ENTERPRISE
+# 🛡️ VNOI KIOSK
 **Hệ sinh thái Giám sát, Cách ly và Chống gian lận (Anti-Cheat) chuyên nghiệp dành riêng cho nền tảng VNOI & DMOJ**
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
@@ -17,7 +17,7 @@
 
 Trong kỷ nguyên bùng nổ của Trí tuệ Nhân tạo (AI) và các công cụ hỗ trợ lập trình (Copilot, ChatGPT, Gemini...), việc duy trì tính minh bạch và công bằng tuyệt đối trong các kỳ thi học sinh giỏi, Olympic Tin học hay các bài kiểm tra đánh giá năng lực thuật toán trực tuyến là một bài toán vô cùng nan giải. Thí sinh có thể dễ dàng gian lận chỉ bằng một cú chuyển tab hoặc một chiếc USB.
 
-**VNOI Kiosk Enterprise** không đơn thuần là một trình duyệt web khóa màn hình. Đây là một **Hệ sinh thái An ninh Client-Server** khép kín, được thiết kế để can thiệp sâu vào nhân hệ điều hành máy trạm (OS Kernel), cô lập hoàn toàn môi trường thi đấu và cắt đứt mọi nỗ lực giao tiếp với thế giới bên ngoài. 
+**VNOI Kiosk** không đơn thuần là một trình duyệt web khóa màn hình. Đây là một **Hệ sinh thái An ninh Client-Server** khép kín, được thiết kế để can thiệp sâu vào nhân hệ điều hành máy trạm (OS Kernel), cô lập hoàn toàn môi trường thi đấu và cắt đứt mọi nỗ lực giao tiếp với thế giới bên ngoài. 
 
 Hệ thống được tối ưu hóa kiến trúc hạ tầng để hoạt động hoàn hảo với mã nguồn của **DMOJ** và đặc biệt là nền tảng **VNOI (Vietnam Olympiad in Informatics)**.
 
@@ -48,7 +48,7 @@ Vận hành bằng **Node.js, Express & PostgreSQL**, máy chủ đóng vai trò
 *   **Định danh Kép (Dual Identification):** Xóa bỏ rủi ro IP ảo. Hệ thống tự động bắt **Public IP** từ tầng mạng HTTP Header, đối chiếu chéo với **Hardware ID** (Mã phần cứng vật lý của Client) để định danh chính xác duy nhất một cá thể, ngăn chặn việc thi hộ.
 *   **Trí tuệ Nhân tạo Giám sát Hành vi (AI Tracker Engine):**
     *   Cơ chế "Nhịp tim" (Ping Mechanism): Client liên tục báo cáo sinh tín hiệu về Server mỗi 5 giây. 
-    *   **Thuật toán trừng phạt:** Hệ thống thấu hiểu các sự cố rớt mạng thông thường. Tuy nhiên, nếu học sinh cố tình "offline" ngầm **từ 30 phút trở lên** và sau đó kết nối lại, AI Tracker sẽ tính là 1 lần vi phạm.
+    *   **Thuật toán trừng phạt:** Hệ thống thấu hiểu các sự cố rớt mạng thông thường. Tuy nhiên, nếu học sinh cố tình "offline" ngầm và sau đó kết nối lại, AI Tracker sẽ tính là 1 lần vi phạm.
     *   Nếu hành vi này lặp lại đến ngưỡng **4 lần**, hệ thống sẽ lập tức gắn cờ **"CHEAT"** (Gian lận) vĩnh viễn trên Dashboard.
 *   **High-throughput I/O Logging:** Tối ưu hóa Database bằng cách không ghi đè log liên tục vào SQL. Mọi đếm số vi phạm của AI Tracker được kết xuất ra các file vật lý `.json` độc lập, giúp Server chịu tải hàng ngàn request Ping/giây mà không sập.
 *   **Quản trị viên toàn năng (Admin Dashboard):** Giám thị có góc nhìn toàn cảnh về phòng thi (Trạng thái Online Live, Crashed, Đã Nộp Bài), cho phép Reset AI Tracker, xuất báo cáo ra định dạng Excel (XLSX) và quản lý Access Code phân quyền.
@@ -74,4 +74,4 @@ Giấy phép AGPL-3.0 được áp dụng để **đóng hoàn toàn lỗ hổng
 > 🚨 **CẢNH BÁO:** Bất kỳ hành vi nào sử dụng mã nguồn này (đặc biệt là Server backend) để vận hành cung cấp dịch vụ, tổ chức thi cử mà cố tình **không công khai mã nguồn sửa đổi** đều cấu thành hành vi vi phạm pháp luật sở hữu trí tuệ quốc tế. Chúng tôi giữ toàn quyền truy cứu các hành vi cố tình lách luật giấy phép AGPL-3.0.
 
 ---
-**CTNS Development - Nơi sự công bằng của khoa học máy tính bắt đầu.**
+**CTNS Development**
