@@ -40,7 +40,7 @@ Hệ thống vận hành song song giữa hai rào chắn: **Bức tường lử
     *   **Kiểm soát Clipboard:** Xóa sạch bộ nhớ tạm ngay khi vào thi và khi nộp bài xong, chặn đứng hành vi copy code từ nhà mang vào phòng thi.
     *   **Vô hiệu hóa Input:** Khóa tính năng kéo-thả (Drag & Drop), tải xuống (Download) và vô hiệu hóa toàn bộ thẻ `<input type="file">` của trình duyệt để chặn upload file lậu.
 *   **Quản lý thiết bị phần cứng:** Tự động phát hiện và kích hoạt cảnh báo đỏ toàn màn hình nếu thí sinh cố tình cắm/rút thiết bị ngoại vi (USB) trái phép. Từ chối khởi động nếu phát hiện môi trường Ảo hóa (VMware, VirtualBox) hoặc thiết lập Đa màn hình (Multiple Monitors).
-*   **Môi trường Compiler kiểm soát khắt khe:** Thí sinh chỉ được truy cập vào trang làm bài VNOI và danh sách trắng (Whitelist) gồm 4 trình biên dịch duy nhất: *ProgramIZ, CPP Shell, Online-IDE, Ideone*. Toàn bộ Facebook, Google, ChatGPT đều bị chặn từ trứng nước.
+*   **Môi trường IDE kiểm soát khắt khe:** Thí sinh chỉ được truy cập vào trang làm bài VNOI và danh sách trắng (Whitelist). Toàn bộ Facebook, Google, ChatGPT đều bị chặn từ trứng nước.
 
 ### ☁️ 2. HỆ THỐNG MÁY CHỦ TRUNG TÂM (SERVER BACKEND)
 Vận hành bằng **Node.js, Express & PostgreSQL**, máy chủ đóng vai trò là "Nhãn quan hệ thống" (The Eye), giám sát hàng ngàn Client đồng thời qua giao thức **WebSocket** theo thời gian thực (Real-time).
