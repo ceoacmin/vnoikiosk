@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTNS | Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="flex h-screen overflow-hidden bg-animated">
+    <aside class="w-64 bg-[#0b1120]/90 backdrop-blur-2xl border-r border-[#1e293b] flex flex-col z-30">
+        <div class="h-16 flex items-center px-6 border-b border-[#1e293b]">
+            <div class="w-8 h-8 bg-gradient-to-br from-sky-400 to-indigo-500 rounded-lg flex items-center justify-center font-black text-sm mr-3 shadow-md">K</div>
+            <div>
+                <h1 class="text-sm font-black text-white tracking-widest">KIOSK</h1>
+                <p class="text-[8px] text-sky-400 font-black tracking-widest uppercase">Enterprise</p>
+            </div>
+        </div>
+        <div class="p-4 flex-1 overflow-y-auto">
+            <div class="text-[9px] font-black text-slate-500 mb-3 uppercase tracking-widest pl-2">Quản trị</div>
+            <div class="nav-item nav-active" id="nav-overview" onclick="switchView('overview')">Tổng Quan</div>
+            <div class="nav-item" id="nav-access" onclick="switchView('access')">Mã Truy Cập</div>
+            <div class="nav-item" id="nav-addexam" onclick="switchView('addexam')">Thêm Bài Thi Mới</div>
+            <div class="nav-item" id="nav-exams" onclick="switchView('exams')">Danh Sách Bài Thi</div>
+            <div class="nav-item" id="nav-students" onclick="switchView('students')">Hồ Sơ Học Sinh</div>
+            <div class="my-4 border-t border-[#1e293b]"></div>
+            <div class="nav-item" id="nav-settings" onclick="switchView('settings')">Cài Đặt Hệ Thống</div>
+        </div>
+        <div class="p-4 border-t border-[#1e293b] bg-black/20">
+            <div class="flex items-center gap-3 mb-4">
+                <img id="sidebar-logo-img" src="" class="w-10 h-10 rounded-lg object-cover border border-[#334155] hidden" />
+                <div id="avatar-initial" class="w-10 h-10 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-black text-base border border-sky-500/30">A</div>
+                <div class="overflow-hidden">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Admin</p>
+                    <p class="font-black text-xs text-white truncate" id="admin-name">Loading...</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-full py-2 text-[10px] text-red-400 font-black tracking-widest uppercase rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500 hover:text-white transition-colors">ĐĂNG XUẤT</button>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col relative z-10">
+        <header class="h-16 flex items-center justify-between px-8 border-b border-[#1e293b] bg-[#0b1120]/80 backdrop-blur-xl z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-1 h-5 bg-sky-500 rounded-full"></div>
+                <h2 id="page-title" class="text-sm font-black uppercase tracking-widest text-white">TỔNG QUAN</h2>
+            </div>
+            <div class="flex items-center gap-4 text-[10px] font-bold">
+                <span id="clock" class="text-slate-400 font-mono tracking-widest bg-black/40 px-3 py-1.5 rounded-lg border border-[#1e293b]">--:--:--</span>
+            </div>
+        </header>
+        <div class="flex-1 overflow-y-auto p-8 relative">
+            <div class="absolute top-[10%] right-[10%] w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none -z-10"></div>
+            <div id="view-overview" class="view-section">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="card lg:col-span-2 relative overflow-hidden">
+                        <p class="text-slate-400 font-black uppercase text-[10px] tracking-widest mb-3">Mã Bảo Mật Kiosk Hiện Tại</p>
+                        <div class="bg-[#0b1120] border border-[#1e293b] p-4 rounded-xl inline-block cursor-pointer hover:border-sky-500/50" onclick="copyDirect(document.getElementById('dash-access-key').innerText)">
+                            <span id="dash-access-key" class="text-xl font-mono font-black text-sky-400 tracking-[0.1em]">LOADING...</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-rows-2 gap-6">
+                        <div class="card flex justify-between items-center p-5">
+                            <div><p class="text-[9px] font-black text-slate-500 tracking-widest uppercase mb-1">Học Sinh</p><p id="stat-students" class="text-2xl font-black text-white">0</p></div>
+                            <div class="text-2xl opacity-50">👨‍🎓</div>
+                        </div>
+                        <div class="card flex justify-between items-center p-5">
+                            <div><p class="text-[9px] font-black text-slate-500 tracking-widest uppercase mb-1">Phòng Thi</p><p id="stat-exams" class="text-2xl font-black text-white">0</p></div>
+                            <div class="text-2xl opacity-50">📋</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="view-access" class="view-section hidden">
+                <div class="max-w-xl mx-auto mt-6">
+                    <div class="card text-center py-10">
+                        <div class="w-16 h-16 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto mb-6 border border-sky-500/20 text-2xl">🔑</div>
+                        <h3 class="text-lg font-black text-white mb-2 tracking-widest">MÃ TRUY CẬP PHÒNG THI</h3>
+                        <p class="text-xs text-slate-400 mb-8 max-w-sm mx-auto">Cung cấp mã này cho học sinh đăng nhập vào phần mềm Kiosk.</p>
+                        <div class="bg-[#0b1120] border border-[#1e293b] rounded-2xl p-6 mb-8 inline-block w-full max-w-sm cursor-pointer hover:border-sky-500/50 transition-colors" onclick="copyDirect(document.getElementById('admin-access-key').innerText)">
+                            <span id="admin-access-key" class="text-2xl font-mono font-black text-emerald-400 tracking-[0.15em] select-all">LOADING...</span>
+                        </div>
+                        <button onclick="generateAccessKey()" id="btn-generate-key" class="btn-danger w-full max-w-sm h-[45px] text-xs">TẠO MÃ MỚI NGẪU NHIÊN</button>
+                    </div>
+                </div>
+            </div>
+            <div id="view-addexam" class="view-section hidden">
+                <div class="max-w-xl mx-auto mt-6">
+                    <div class="card p-8">
+                        <h3 class="font-black text-[11px] mb-6 text-sky-400 tracking-widest uppercase border-b border-[#1e293b] pb-3">THÊM PHÒNG THI VNOI</h3>
+                        <form id="form-create-exam" onsubmit="createExam(event)" class="space-y-4">
+                            <input type="text" id="exam-title" required class="input-field" placeholder="Tên bài thi (Vd: Thi HK1 Lớp 10)">
+                            <input type="url" id="exam-url" required class="input-field" placeholder="Link VNOI (https://oj.vnoi.info/...)">
+                            <input type="text" id="exam-code" required class="input-field font-mono text-emerald-400 font-bold bg-emerald-500/5" placeholder="Mật khẩu của bài thi VNOI">
+                            <button type="submit" class="btn-primary w-full h-[45px] text-[11px] mt-2">LƯU BÀI THI</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="view-exams" class="view-section hidden">
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-5 bg-[#0b1120] border-b border-[#1e293b]"><h3 class="text-[11px] font-black text-white tracking-widest uppercase">DANH SÁCH BÀI THI</h3></div>
+                    <div class="overflow-x-auto max-h-[450px]">
+                        <table class="w-full text-left">
+                            <thead><tr><th class="pl-6 w-2/5">Tên Phòng</th><th class="text-center w-[15%]">Link VNOI</th><th class="text-center w-1/4">Mã Lẻ / Mật Khẩu</th><th class="pr-6 text-right w-[15%]">Quản Trị</th></tr></thead>
+                            <tbody id="exam-list" class="divide-y divide-[#1e293b]"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="view-students" class="view-section hidden">
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-5 bg-[#0b1120] border-b border-[#1e293b] flex justify-between items-center">
+                        <h3 class="text-[11px] font-black text-white tracking-widest uppercase">HỒ SƠ HỌC SINH</h3>
+                        <div class="flex gap-2">
+                            <button onclick="resetTracker()" class="px-3 py-1.5 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500 hover:text-black text-[9px] font-black uppercase rounded-lg transition-all border border-yellow-500/30">RESET AI TRACKER TẤT CẢ</button>
+                            <button onclick="exportExcel()" class="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[9px] font-black uppercase rounded-lg transition-all border border-emerald-500/30">XUẤT EXCEL</button>
+                            <button onclick="loadData()" class="px-3 py-1.5 bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white text-[9px] font-black uppercase rounded-lg transition-all border border-sky-500/30">LÀM MỚI</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead><tr><th class="pl-6">Tài Khoản</th><th class="text-center">IP Address</th><th class="text-center">Hardware ID</th><th class="text-center">Ping Cuối</th><th class="text-center">Trạng Thái</th><th class="pr-6 text-right">AI Tracker</th></tr></thead>
+                            <tbody id="student-list" class="divide-y divide-[#1e293b]"></tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-[#0b1120] border-t border-[#1e293b] flex justify-between items-center">
+                        <div class="text-[10px] text-slate-400 font-bold">Trang <span id="current-page">1</span> / <span id="total-pages">1</span></div>
+                        <div class="flex gap-2 items-center">
+                            <button onclick="changePage(-1)" class="px-3 py-1 bg-[#1e293b] rounded text-white text-[10px] font-bold hover:bg-[#334155]">TRƯỚC</button>
+                            <input type="number" id="page-input" class="w-12 bg-[#0b1120] border border-[#334155] text-white text-center rounded text-[10px] py-1 outline-none focus:border-sky-500" value="1" min="1" onchange="goToPage(this.value)">
+                            <button onclick="changePage(1)" class="px-3 py-1 bg-[#1e293b] rounded text-white text-[10px] font-bold hover:bg-[#334155]">SAU</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="view-settings" class="view-section hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="text-[11px] font-black text-white mb-5 uppercase tracking-widest border-b border-[#1e293b] pb-3">ĐỔI MẬT KHẨU</h3>
+                        <form id="form-change-pwd" onsubmit="changePassword(event)" class="space-y-4">
+                            <input type="password" id="set-old-pwd" required class="input-field" placeholder="Mật khẩu hiện tại">
+                            <input type="password" id="set-new-pwd" required class="input-field" placeholder="Mật khẩu mới">
+                            <input type="password" id="set-confirm-pwd" required class="input-field" placeholder="Xác nhận mật khẩu">
+                            <button type="submit" id="btn-change-pwd" class="btn-primary w-full h-[45px] text-[11px]">CẬP NHẬT</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-[11px] font-black text-white mb-5 uppercase tracking-widest border-b border-[#1e293b] pb-3">ẢNH ĐẠI DIỆN</h3>
+                        <form id="form-upload-logo" onsubmit="uploadLogo(event)" class="space-y-4">
+                            <div class="border-2 border-dashed border-[#334155] rounded-xl p-5 text-center hover:border-emerald-500/50 transition-colors cursor-pointer relative h-[142px] flex flex-col justify-center bg-[#0b1120]/50">
+                                <input type="file" id="set-logo-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required>
+                                <p class="text-[11px] font-bold text-slate-400">Click để chọn ảnh (JPG, PNG)</p>
+                            </div>
+                            <button type="submit" id="btn-upload-logo" class="btn-primary w-full h-[45px] text-[11px] !bg-gradient-to-r !from-emerald-500 !to-teal-500">TẢI LÊN</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="modal-display-link" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="absolute inset-0 modal-overlay" onclick="hideModal('modal-display-link')"></div>
+        <div class="glass-panel w-full max-w-sm rounded-3xl p-8 relative z-10 modal-content border border-[#334155] shadow-2xl text-center">
+            <h3 class="text-[11px] font-black text-white mb-3 tracking-widest uppercase">ĐƯỜNG DẪN</h3>
+            <div class="bg-black/50 p-4 rounded-xl border border-sky-500/30 mb-5 truncate cursor-pointer hover:bg-black/70 transition-colors" onclick="copyDirect(document.getElementById('display-link-text').innerText)" title="Click để copy">
+                <span id="display-link-text" class="text-[11px] font-bold text-sky-400"></span>
+            </div>
+            <div class="flex gap-3">
+                <a id="display-link-href" target="_blank" class="btn-primary flex-1 !py-2.5 text-[10px] text-center !rounded-lg uppercase">TRUY CẬP</a>
+                <button onclick="hideModal('modal-display-link')" class="btn-outline flex-1 !py-2.5 text-[10px] !rounded-lg uppercase">ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-display-code" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="absolute inset-0 modal-overlay" onclick="hideModal('modal-display-code')"></div>
+        <div class="glass-panel w-full max-w-sm rounded-3xl p-8 relative z-10 modal-content border border-[#334155] shadow-2xl text-center overflow-hidden">
+            <h3 class="text-[11px] font-black text-white mb-3 tracking-widest uppercase">MÃ CODE</h3>
+            <div class="bg-black/50 p-4 rounded-xl border border-emerald-500/30 mb-5 cursor-pointer hover:bg-black/70 transition-colors w-full overflow-hidden flex justify-center" onclick="copyDirect(document.getElementById('display-code-text').innerText)" title="Click để copy">
+                <span id="display-code-text" class="text-xl font-black font-mono text-emerald-400 tracking-[0.1em] truncate block w-full text-center"></span>
+            </div>
+            <button onclick="hideModal('modal-display-code')" class="btn-primary w-full !py-2.5 text-[10px] !bg-gradient-to-r !from-emerald-500 !to-teal-600 !rounded-lg uppercase">ĐÓNG</button>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>
