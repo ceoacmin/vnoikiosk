@@ -35,7 +35,7 @@ namespace VnoiKiosk
         private Window _toolWindow;
 
         private string _setupHtml = "";
-        private string BASE_URL = "http://160.187.247.69:3000";
+        private string BASE_URL = "http://localhost:3000";
         private bool _isPinging = false;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -115,7 +115,7 @@ namespace VnoiKiosk
                 else
                 {
                     string defaultPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "domain.env");
-                    File.WriteAllText(defaultPath, "BASE_URL=http://160.187.247.69:3000");
+                    File.WriteAllText(defaultPath, "BASE_URL=http://localhost:3000");
                 }
             }
             catch { }
